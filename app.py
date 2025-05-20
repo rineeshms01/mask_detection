@@ -1,39 +1,40 @@
 import streamlit as st
-import numpy as np
 from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import img_to_array
 from PIL import Image
+import numpy as np
 
-# Load your trained model (make sure mask_detector.h5 is in the same folder)
-model = load_model('mask_detector.h5')
+# Page title
+st.title("Face Mask Detection")
 
-# Image size your model expects
-IMG_SIZE = 150
+# Load pre-trained model
+@st.cache_resource
+def load_trained_model():
+    model = load_model("mask_detector_model.h5")  # Update with your actual model filename
+    return model
 
-st.title("Mask Detector")
+model = load_trained_model()
 
+# Upload image
 uploaded_file = st.file_uploader("Upload an image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption="Uploaded Image", use_column_width=True)
+    # Display uploaded image
+    image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="Uploaded Image", use_container_width=True)
 
-    # Preprocess the image
-    img = image.resize((IMG_SIZE, IMG_SIZE))
-    img_array = np.array(img)
-
-    # If image has alpha channel, remove it
-    if img_array.shape[-1] == 4:
-        img_array = img_array[..., :3]
-
-    img_array = img_array / 255.0  # normalize
-    img_array = np.expand_dims(img_array, axis=0)  # batch dimension
+    # Preprocess image to match model input shape (224x224)
+    img_resized = image.resize((224, 224))
+    img_array = img_to_array(img_resized)
+    img_array = img_array / 255.0  # Normalize pixel values
+    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
 
     # Predict
-    pred = model.predict(img_array)[0][0]
+    prediction = model.predict(img_array)[0][0]
 
-    if pred < 0.5:
-        st.markdown("### Prediction: **With Mask**")
-        st.markdown(f"Confidence: {(1 - pred) * 100:.2f}%")
+    # Display result
+    if prediction < 0.5:
+        st.markdown("### Prediction: 😷 **With Mask**")
     else:
-        st.markdown("### Prediction: **Without Mask**")
-        st.markdown(f"Confidence: {pred * 100:.2f}%")
+        st.markdown("### Prediction: 😷 **Without Mask**")
+
