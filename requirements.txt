@@ -1,3 +1,5 @@
-numpy
-tensorflow
-Pillow
+tensorflow==2.14.0
+numpy==1.24.3
+pandas==2.2.3
+streamlit==1.45.1
+# ... rest of your packages
