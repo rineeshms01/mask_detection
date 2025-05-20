@@ -2,32 +2,38 @@ import streamlit as st
 import numpy as np
 from tensorflow.keras.models import load_model
 from PIL import Image
-import cv2
 
-# Load model
-model = load_model('mask_detector_model.h5')
+# Load your trained model (make sure mask_detector.h5 is in the same folder)
+model = load_model('mask_detector.h5')
 
-# UI
-st.title("Face Mask Detector")
-st.write("Upload a photo to check if the person is wearing a mask or not.")
+# Image size your model expects
+IMG_SIZE = 150
 
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
+st.title("Mask Detector")
+
+uploaded_file = st.file_uploader("Upload an image...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    img = Image.open(uploaded_file)
-    st.image(img, caption='Uploaded Image', use_column_width=True)
+    image = Image.open(uploaded_file)
+    st.image(image, caption="Uploaded Image", use_column_width=True)
 
-    # Preprocess image
-    img = img.resize((150, 150))
+    # Preprocess the image
+    img = image.resize((IMG_SIZE, IMG_SIZE))
     img_array = np.array(img)
-    if img_array.shape[-1] == 4:  # RGBA to RGB
+
+    # If image has alpha channel, remove it
+    if img_array.shape[-1] == 4:
         img_array = img_array[..., :3]
-    img_array = img_array / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
+
+    img_array = img_array / 255.0  # normalize
+    img_array = np.expand_dims(img_array, axis=0)  # batch dimension
 
     # Predict
     pred = model.predict(img_array)[0][0]
-    label = "With Mask" if pred < 0.5 else "Without Mask"
-    confidence = (1 - pred) if pred < 0.5 else pred
-    st.write(f"### Prediction: **{label}**")
-    st.write(f"Confidence: {confidence:.2f}")
+
+    if pred < 0.5:
+        st.markdown("### Prediction: **With Mask**")
+        st.markdown(f"Confidence: {(1 - pred) * 100:.2f}%")
+    else:
+        st.markdown("### Prediction: **Without Mask**")
+        st.markdown(f"Confidence: {pred * 100:.2f}%")
