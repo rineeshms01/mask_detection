@@ -1,5 +1,5 @@
 numpy
 tensorflow
-PIL
+Pillow
 pickle
 os
