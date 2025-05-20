@@ -9,7 +9,7 @@ model = load_model('mask_detector.h5')
 # Set the image size expected by your model
 IMG_SIZE = 224  # You had 244, but many models like MobileNetV2 use 224. Adjust if your model uses something else.
 
-st.title("Mask Detector App")
+st.title("😷 Mask Detector App")
 
 st.markdown("Upload an image to check whether the person is **wearing a mask** or **not**.")
 
@@ -31,12 +31,11 @@ if uploaded_file is not None:
 
         # Output prediction
         if prediction < 0.5:
-            st.error("Prediction: **Without Mask**")
-            st.write(f"**Confidence:** {prediction * 100:.2f}%")
-            
-        else:
-            st.success("Prediction: **With Mask**")
+            st.success("✅ Prediction: **Without Mask**")
             st.write(f"**Confidence:** {(1 - prediction) * 100:.2f}%")
+        else:
+            st.error("❌ Prediction: **With Mask**")
+            st.write(f"**Confidence:** {prediction * 100:.2f}%")
 
     except Exception as e:
         st.error("There was an error processing the image.")
