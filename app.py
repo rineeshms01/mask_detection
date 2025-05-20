@@ -31,10 +31,10 @@ if uploaded_file is not None:
 
         # Output prediction
         if prediction < 0.5:
-            st.success("✅ Prediction: **Without Mask**")
+            st.success("Prediction: **Without Mask**")
             st.write(f"**Confidence:** {(1 - prediction) * 100:.2f}%")
         else:
-            st.error("❌ Prediction: **With Mask**")
+            st.error("Prediction: **With Mask**")
             st.write(f"**Confidence:** {prediction * 100:.2f}%")
 
     except Exception as e:
