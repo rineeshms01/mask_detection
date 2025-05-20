@@ -7,7 +7,7 @@ from PIL import Image
 model = load_model('mask_detector.h5')
 
 # Image size your model expects
-IMG_SIZE = 150
+IMG_SIZE = 244
 
 st.title("Mask Detector")
 
