@@ -1,0 +1,5 @@
+numpy
+tensorflow
+PIL
+pickle
+os
