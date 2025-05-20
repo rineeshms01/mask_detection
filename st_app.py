@@ -7,30 +7,29 @@ from PIL import Image
 import pickle
 import os
 
-# Paths
-MODEL_DIR = "saved_mask_model"
-LABEL_PATH = "label_binarizer.pickle"
+# File paths
+MODEL_PATH = "mask_detector_model.keras"
+LB_PATH = "label_binarizer.pickle"
 
 st.title("😷 Mask Detection App")
 
-if not os.path.isdir(MODEL_DIR):
-    st.error(f"❌ Model directory '{MODEL_DIR}' not found.")
+if not os.path.isfile(MODEL_PATH):
+    st.error(f"❌ Model file '{MODEL_PATH}' not found.")
     st.stop()
 
-if not os.path.isfile(LABEL_PATH):
-    st.error(f"❌ Label binarizer file '{LABEL_PATH}' not found.")
+if not os.path.isfile(LB_PATH):
+    st.error(f"❌ Label binarizer file '{LB_PATH}' not found.")
     st.stop()
 
-# Load model
-model = tf.keras.models.load_model(MODEL_DIR)
-
-# Load label binarizer
-with open(LABEL_PATH, "rb") as f:
+# Load model and label binarizer
+model = tf.keras.models.load_model(MODEL_PATH)
+with open(LB_PATH, "rb") as f:
     lb = pickle.load(f)
 
+# Get labels
 labels = list(lb.keys()) if isinstance(lb, dict) else list(lb.classes_)
 
-# File uploader
+# Upload image
 uploaded_file = st.file_uploader("📤 Upload a face image (JPG/PNG)", type=["jpg", "jpeg", "png"])
 
 if uploaded_file:
@@ -49,8 +48,8 @@ if uploaded_file:
     label = labels[pred_idx]
     confidence = preds[pred_idx] * 100
 
-    # Result
+    # Display
     if label.lower() == "with_mask":
-        st.success(f"✅ Person is wearing a mask ({confidence:.2f}% confidence)")
+        st.success(f"✅ **Person is wearing a mask** ({confidence:.2f}% confidence)")
     else:
-        st.error(f"❌ Person is NOT wearing a mask ({confidence:.2f}% confidence)")
+        st.error(f"❌ **Person is NOT wearing a mask** ({confidence:.2f}% confidence)")
