@@ -1,5 +1,4 @@
 numpy
 tensorflow
 Pillow
-pickle
 os
