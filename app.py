@@ -18,7 +18,7 @@ if uploaded_file is not None:
     st.image(image, caption="Uploaded Image", use_column_width=True)
 
     # Preprocess the image
-    img = image.resize((IMG_SIZE, IMG_SIZE))
+    img = image.resize((IMG_SIZE, IMG_SIZE,3))
     img_array = np.array(img)
 
     # If image has alpha channel, remove it
