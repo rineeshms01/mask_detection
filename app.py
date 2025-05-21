@@ -9,7 +9,7 @@ model = load_model('mask_detector.h5')
 # Set the image size expected by your model
 IMG_SIZE = 224  # You had 244, but many models like MobileNetV2 use 224. Adjust if your model uses something else.
 
-st.title("😷 Mask Detector App")
+st.title("Mask Detector App")
 
 st.markdown("Upload an image to check whether the person is **wearing a mask** or **not**.")
 
