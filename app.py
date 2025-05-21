@@ -30,12 +30,14 @@ if uploaded_file is not None:
         prediction = model.predict(img_array)[0][0]
 
         # Output prediction
-        if prediction < 0.5:
-            st.success("Prediction: **Without Mask**")
-            st.write(f"**Confidence:** {(1 - prediction) * 100:.2f}%")
-        else:
-            st.error("Prediction: **With Mask**")
+        # Output prediction
+        if prediction >= 0.5:
+            st.success("Prediction: **With Mask**")
             st.write(f"**Confidence:** {prediction * 100:.2f}%")
+        else:
+            st.error("Prediction: **Without Mask**")
+            st.write(f"**Confidence:** {(1 - prediction) * 100:.2f}%")
+
 
     except Exception as e:
         st.error("There was an error processing the image.")
